@@ -127,4 +127,20 @@ class SearchRepository {
         .eq('person_id', personId)
         .eq('locked_by', _client.auth.currentUser!.id);
   }
+  Future<List<Map<String, dynamic>>> getMyLockedPeople() async {
+  final currentUserId = _client.auth.currentUser!.id;
+
+  final response = await _client
+      .from('person_locks')
+      .select('''
+        *,
+        person:tracked_people!person_id(
+          id, full_name, phone_no, g_number, a_number, description, created_at
+        )
+      ''')
+      .eq('locked_by', currentUserId)
+      .eq('status', 'locked')
+      .order('locked_on', ascending: false);
+  return response;
+}
 }
