@@ -61,6 +61,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  int _totalLockCount(Map<String, dynamic> person) {
+    final locks = person['locks'];
+    if (locks is List) {
+      final first = locks.isNotEmpty ? locks.first : null;
+      if (first is Map) {
+        final count = first['count'];
+        if (count is int) return count;
+        if (count is String) return int.tryParse(count) ?? 0;
+      }
+      return 0;
+    }
+    if (locks is Map) {
+      final count = locks['count'];
+      if (count is int) return count;
+      if (count is String) return int.tryParse(count) ?? 0;
+    }
+    return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -180,6 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           final dateLabel = lockedOn.isNotEmpty
                               ? 'Locked: ${lockedOn.split('T').first}'
                               : '';
+                          final lockCount = _totalLockCount(person);
 
                           return Card(
                             margin: const EdgeInsets.only(bottom: 8),
@@ -192,23 +212,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               subtitle: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const SizedBox(height: 4),
-                                  Text(
-                                      '+91 ${person['phone_no'] as String? ?? ''}'),
-                                  if ((person['a_number'] as String? ?? '')
-                                      .isNotEmpty)
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        lockCount > 1 ? Icons.warning_rounded : Icons.lock_outline,
+                                        size: 16,
+                                        color: lockCount > 1 ? Colors.red.shade700 : Colors.black54,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        '$lockCount ${lockCount == 1 ? 'firm' : 'firms'}',
+                                        style: TextStyle(
+                                          color: lockCount > 1 ? Colors.red.shade700 : Colors.black87,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text('+91 ${person['phone_no'] as String? ?? ''}',
+                                      style: const TextStyle(color: Colors.black87)),
+                                  if ((person['a_number'] as String? ?? '').isNotEmpty)
                                     Text('A Number: ${person['a_number']}'),
                                   if (dateLabel.isNotEmpty)
-                                    Text(
-                                      dateLabel,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.black45,
-                                      ),
-                                    ),
+                                    Text(dateLabel, style: const TextStyle(fontSize: 12, color: Colors.black45)),
                                 ],
                               ),
                               trailing: const Icon(Icons.chevron_right),

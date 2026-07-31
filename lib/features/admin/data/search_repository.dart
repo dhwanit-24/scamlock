@@ -136,7 +136,7 @@ class SearchRepository {
         *,
         person:tracked_people!person_id(
           id, full_name, phone_no, g_number, a_number, description, created_at
-        )
+        ,locks:person_locks(count))
       ''')
       .eq('locked_by', currentUserId)
       .eq('status', 'locked')
