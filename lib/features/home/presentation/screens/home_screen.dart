@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import '../../../../core/routes/app_routes.dart';
 import '../../../admin/data/search_repository.dart';
+import '../../../auth/data/auth_repository.dart';   // <- add this
+import '../../../../core/routes/app_routes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -103,6 +103,24 @@ class _HomeScreenState extends State<HomeScreen>
         actions: [
           IconButton(
             onPressed: () async {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Sign out?'),
+                  content: const Text('You will be signed out of ScamLock.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Cancel'),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('Sign out'),
+                    ),
+                  ],
+                ),
+              );
+              if (confirmed != true) return;
               await Supabase.instance.client.auth.signOut();
               if (context.mounted) {
                 Navigator.of(context).pushReplacementNamed(AppRoutes.login);
