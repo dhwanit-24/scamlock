@@ -14,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with WidgetsBindingObserver {
   final _searchRepository = SearchRepository();
+  final _authRepository = AuthRepository();
   List<Map<String, dynamic>> _lockedPeople = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -26,10 +27,57 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.resumed) {
-      _loadMyLocks();
+      if (await _validateSession()) {
+        _loadMyLocks();
+      }
     }
+  }
+
+  Future<bool> _validateSession() async {
+    try {
+      final profile = await _authRepository.getCurrentProfile();
+      if (profile == null) {
+        await _signOutAndReturnToLogin(
+          'Session expired. Please sign in again.',
+        );
+        return false;
+      }
+      final status = profile['account_status'] as String? ?? '';
+      if (status != 'active') {
+        await _signOutAndReturnToLogin(_statusMessage(status));
+        return false;
+      }
+      return true;
+    } catch (error) {
+      debugPrint('Session validation error: $error');
+      return true;
+    }
+  }
+
+  String _statusMessage(String status) {
+    switch (status) {
+      case 'suspended':
+        return 'Your access is suspended. Contact administrator.';
+      case 'rejected':
+        return 'Your account was rejected.';
+      case 'pending':
+        return 'Your account is pending approval.';
+      default:
+        return 'Your session is no longer valid. Please sign in again.';
+    }
+  }
+
+  Future<void> _signOutAndReturnToLogin(String message) async {
+    await Supabase.instance.client.auth.signOut();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+    await Future.delayed(const Duration(milliseconds: 1500));
+    if (!mounted) return;
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
   }
 
   @override
