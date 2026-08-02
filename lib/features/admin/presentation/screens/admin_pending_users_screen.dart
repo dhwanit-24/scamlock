@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../auth/data/auth_repository.dart';
 import '../../data/admin_repository.dart';
 
 class AdminPendingUsersScreen extends StatefulWidget {
