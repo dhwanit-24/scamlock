@@ -47,7 +47,7 @@ class _ConfirmLockScreenState extends State<ConfirmLockScreen> {
     });
 
     try {
-      await _searchRepository.createPersonLock(personId);
+      await _searchRepository.createPersonLock(personId, note: _descriptionController.text.trim());
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

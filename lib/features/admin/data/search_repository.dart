@@ -75,11 +75,12 @@ class SearchRepository {
     return response;
   }
 
-  Future<void> createPersonLock(String personId) async {
+  Future<void> createPersonLock(String personId, {String? note}) async {
     await _client.from('person_locks').insert({
       'person_id': personId,
       'locked_by': _client.auth.currentUser!.id,
       'status': 'locked',
+      if (note != null && note.isNotEmpty) 'note': note,
     });
   }
 
