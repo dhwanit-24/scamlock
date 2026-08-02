@@ -17,7 +17,7 @@ class _AuthGateScreenState extends State<AuthGateScreen> {
   @override
   void initState() {
     super.initState();
-    _checkSession();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkSession());
   }
 
   Future<void> _checkSession() async {
