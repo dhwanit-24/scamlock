@@ -17,7 +17,8 @@ class RecordDetailScreen extends StatefulWidget {
   State<RecordDetailScreen> createState() => _RecordDetailScreenState();
 }
 
-class _RecordDetailScreenState extends State<RecordDetailScreen> {
+class _RecordDetailScreenState extends State<RecordDetailScreen>
+    with WidgetsBindingObserver {
   final _searchRepository = SearchRepository();
   Map<String, dynamic>? _person;
   List<Map<String, dynamic>> _locks = [];
@@ -25,6 +26,25 @@ class _RecordDetailScreenState extends State<RecordDetailScreen> {
   Map<String, dynamic>? _myLock;
   bool _isLoading = true;
   String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadData();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {

@@ -23,7 +23,8 @@ class AdminUserListScreen extends StatefulWidget {
   State<AdminUserListScreen> createState() => _AdminUserListScreenState();
 }
 
-class _AdminUserListScreenState extends State<AdminUserListScreen> {
+class _AdminUserListScreenState extends State<AdminUserListScreen>
+    with WidgetsBindingObserver {
   final _adminRepository = AdminRepository();
   List<Map<String, dynamic>> _users = [];
   List<Map<String, dynamic>> _filteredUsers = [];
@@ -35,7 +36,21 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadUsers();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadUsers();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<void> _loadUsers() async {

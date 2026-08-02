@@ -9,7 +9,8 @@ class AdminPendingUsersScreen extends StatefulWidget {
       _AdminPendingUsersScreenState();
 }
 
-class _AdminPendingUsersScreenState extends State<AdminPendingUsersScreen> {
+class _AdminPendingUsersScreenState extends State<AdminPendingUsersScreen>
+    with WidgetsBindingObserver {
   final _adminRepository = AdminRepository();
   List<Map<String, dynamic>> _pendingUsers = [];
   bool _isLoading = true;
@@ -18,7 +19,21 @@ class _AdminPendingUsersScreenState extends State<AdminPendingUsersScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadPendingUsers();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadPendingUsers();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<void> _loadPendingUsers() async {

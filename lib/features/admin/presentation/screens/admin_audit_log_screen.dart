@@ -8,7 +8,8 @@ class AdminAuditLogScreen extends StatefulWidget {
   State<AdminAuditLogScreen> createState() => _AdminAuditLogScreenState();
 }
 
-class _AdminAuditLogScreenState extends State<AdminAuditLogScreen> {
+class _AdminAuditLogScreenState extends State<AdminAuditLogScreen>
+    with WidgetsBindingObserver {
   final _adminRepository = AdminRepository();
   List<Map<String, dynamic>> _auditEntries = [];
   bool _isLoading = true;
@@ -17,7 +18,21 @@ class _AdminAuditLogScreenState extends State<AdminAuditLogScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadAuditLog();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadAuditLog();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<void> _loadAuditLog() async {
