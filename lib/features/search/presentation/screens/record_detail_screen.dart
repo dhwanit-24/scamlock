@@ -306,7 +306,7 @@ class _LockCard extends StatelessWidget {
     final status = lock['status'] as String? ?? 'locked';
     final lockedOn = lock['locked_on'] as String? ?? '';
     final unlockedOn = lock['unlocked_on'] as String?;
-
+    final note = lock['note'] as String?;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -324,6 +324,14 @@ class _LockCard extends StatelessWidget {
               Text(
                 'Unlocked: ${unlockedOn.split('T').first}',
                 style: const TextStyle(fontSize: 12),
+              ),
+            if (note != null && note.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  'Reason: $note',
+                  style: const TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
           ],
         ),
