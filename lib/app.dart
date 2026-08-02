@@ -13,6 +13,7 @@ import 'features/search/presentation/screens/record_detail_screen.dart';
 import 'features/home/presentation/screens/home_screen.dart';
 import 'features/lock/presentation/screens/confirm_lock_screen.dart';
 import 'features/lock/presentation/screens/lock_person_screen.dart';
+import 'features/auth/presentation/screens/auth_gate_screen.dart';
 
 class ScamLockApp extends StatelessWidget {
   const ScamLockApp({super.key});
@@ -28,7 +29,7 @@ class ScamLockApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: AppRoutes.login,
+      home: const AuthGateScreen(),
       routes: {
         AppRoutes.login: (_) => const LoginScreen(),
         AppRoutes.requestAccess: (_) => const RequestAccessScreen(),
