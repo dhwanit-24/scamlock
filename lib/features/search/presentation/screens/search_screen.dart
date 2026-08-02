@@ -157,8 +157,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       onTap: () {
                         Navigator.of(context).pushNamed(
                           AppRoutes.recordDetail,
-                          arguments: {'personId': person['id'] as String, 'person': person, 'lockCount': lockCount, 'phoneNo': person['phone_no'] as String? ?? '',},
-                        );
+                          arguments: {'personId': person['id'] as String, 'person': person},                        );
                       },
                     );
                   },

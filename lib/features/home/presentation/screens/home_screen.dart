@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../admin/data/search_repository.dart';
-import '../../../auth/data/auth_repository.dart';   // <- add this
+import '../../../auth/data/auth_repository.dart';
 import '../../../../core/routes/app_routes.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -118,8 +118,6 @@ class _HomeScreenState extends State<HomeScreen>
       arguments: {
         'personId': person['id'] as String,
         'person': person,
-        'lockCount': 0,
-        'phoneNo': person['phone_no'] as String? ?? '',
       },
     );
   }

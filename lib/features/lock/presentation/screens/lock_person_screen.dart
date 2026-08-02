@@ -44,16 +44,13 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
       final trimmedG = _gNumberController.text.trim();
       final trimmedA = _aNumberController.text.trim();
 
-      final results = await Future.wait([
-        Future.delayed(const Duration(seconds: 4)),
-        _searchRepository.findExistingPerson(
-          phone: _phoneController.text.trim(),
-          gNumber: trimmedG.isNotEmpty ? trimmedG.toUpperCase() : null,
-          aNumber: trimmedA.isNotEmpty ? trimmedA : null,
-        ),
-      ]);
+      final results = await _searchRepository.findExistingPerson(
+        phone: _phoneController.text.trim(),
+        gNumber: trimmedG.isNotEmpty ? trimmedG.toUpperCase() : null,
+        aNumber: trimmedA.isNotEmpty ? trimmedA : null,
+      );
 
-      existing = results[1] as List<Map<String, dynamic>>;
+      existing = results;
     } catch (error) {
       debugPrint('Lock person check error: $error');
     }

@@ -155,7 +155,7 @@ class _AdminPendingUsersScreenState extends State<AdminPendingUsersScreen> {
                     userId: user['id'] as String,
                     userName: user['firm_name'] as String,
                     action: 'Approve',
-                    status: 'activated',
+                    status: 'activate',
                     actionType: 'approved',
                   ),
                   onReject: () => _confirmAction(
