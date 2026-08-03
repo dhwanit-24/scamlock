@@ -1,4 +1,10 @@
 name: idea
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "#B42318"
+  adaptive_icon_foreground: "assets/icon/icon_foreground.png"
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -37,6 +43,7 @@ dependencies:
   supabase_flutter: ^2.16.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.3
   flutter_test:
     sdk: flutter
 
