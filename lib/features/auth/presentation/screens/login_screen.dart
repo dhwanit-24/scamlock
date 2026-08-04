@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _authRepository = AuthRepository();
 
   bool _isSubmitting = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -101,117 +102,140 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Spacer(),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Spacer(),
 
-                const Icon(
-                  Icons.shield_outlined,
-                  size: 72,
-                  color: Color(0xFFB42318),
-                ),
+                        const Icon(
+                          Icons.shield_outlined,
+                          size: 72,
+                          color: Color(0xFFB42318),
+                        ),
 
-                const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                const Text(
-                  'ScamLock',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                        const Text(
+                          'ScamLock',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
 
-                const SizedBox(height: 8),
+                        const SizedBox(height: 8),
 
-                const Text(
-                  'Check before you transact.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 16,
-                  ),
-                ),
+                        const Text(
+                          'Check before you transact.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 16,
+                          ),
+                        ),
 
-                const SizedBox(height: 48),
+                        const SizedBox(height: 48),
 
-                TextFormField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone number',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.phone_outlined),
-                  ),
-                  validator: (value) {
-                    final digitsOnly =
-                        (value ?? '').replaceAll(RegExp(r'\D'), '');
+                        TextFormField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          enabled: !_isSubmitting,
+                          decoration: const InputDecoration(
+                            labelText: 'Phone number',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.phone_outlined),
+                          ),
+                          validator: (value) {
+                            final digitsOnly =
+                            (value ?? '').replaceAll(RegExp(r'\D'), '');
 
-                    if (!RegExp(r'^\d{10}$').hasMatch(digitsOnly)) {
-                      return 'Enter a valid 10-digit phone number.';
-                    }
+                            if (!RegExp(r'^\d{10}$').hasMatch(digitsOnly)) {
+                              return 'Enter a valid 10-digit phone number.';
+                            }
 
-                    return null;
-                  },
-                ),
+                            return null;
+                          },
+                        ),
 
-                const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.lock_outline),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password.';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 24),
-
-                FilledButton(
-                  onPressed: _isSubmitting ? null : _handleSignIn,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    child: _isSubmitting
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          enabled: !_isSubmitting,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            border: const OutlineInputBorder(),
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
                             ),
-                          )
-                        : const Text('Sign in'),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password.';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        FilledButton(
+                          onPressed: _isSubmitting ? null : _handleSignIn,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            child: _isSubmitting
+                                ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                                : const Text('Sign in'),
+                          ),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              AppRoutes.requestAccess,
+                            );
+                          },
+                          child: const Text('New firm? Request access'),
+                        ),
+
+                        const Spacer(),
+                      ],
+                    ),
                   ),
                 ),
-
-                const SizedBox(height: 12),
-
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(
-                      AppRoutes.requestAccess,
-                    );
-                  },
-                  child: const Text('New firm? Request access'),
-                ),
-
-                const Spacer(),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

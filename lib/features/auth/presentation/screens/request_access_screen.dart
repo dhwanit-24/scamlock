@@ -23,6 +23,7 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
   final _passwordController = TextEditingController();
 
   bool _isSubmitting = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -130,6 +131,7 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
               TextFormField(
                 controller: _fullNameController,
                 textCapitalization: TextCapitalization.words,
+                enabled: !_isSubmitting,
                 decoration: _inputStyle(
                   label: 'Your name',
                   icon: Icons.person_outline,
@@ -141,6 +143,7 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
               TextFormField(
                 controller: _firmNameController,
                 textCapitalization: TextCapitalization.words,
+                enabled: !_isSubmitting,
                 decoration: _inputStyle(
                   label: 'Firm name',
                   icon: Icons.business_outlined,
@@ -153,6 +156,7 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 maxLength: 10,
+                enabled: !_isSubmitting,
                 decoration: _inputStyle(
                   label: 'Phone number',
                   icon: Icons.phone_outlined,
@@ -173,6 +177,7 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
+                enabled: !_isSubmitting,
                 decoration: _inputStyle(
                   label: 'Email address (optional)',
                   icon: Icons.email_outlined,
@@ -183,6 +188,7 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
               TextFormField(
                 controller: _locationController,
                 textCapitalization: TextCapitalization.words,
+                enabled: !_isSubmitting,
                 decoration: _inputStyle(
                   label: 'Firm location',
                   icon: Icons.location_on_outlined,
@@ -193,10 +199,24 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
 
               TextFormField(
                 controller: _passwordController,
-                obscureText: true,
+                obscureText: _obscurePassword,
+                enabled: !_isSubmitting,
                 decoration: _inputStyle(
                   label: 'Create password',
                   icon: Icons.lock_outline,
+                ).copyWith(
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.length < 8) {
