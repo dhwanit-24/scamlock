@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../admin/data/search_repository.dart';
+import 'package:flutter/services.dart';
 
 class LockPersonScreen extends StatefulWidget {
   const LockPersonScreen({super.key});
@@ -87,7 +88,10 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
         description: _descriptionController.text.trim(),
       );
 
-      await _searchRepository.createPersonLock(created['id'] as String);
+      await _searchRepository.createPersonLock(
+        created['id'] as String,
+        note: _descriptionController.text.trim(),
+      );
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -156,6 +160,10 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
                       TextFormField(
                         controller: _phoneController,
                         keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
                         decoration: const InputDecoration(
                           labelText: 'Phone Number',
                           border: OutlineInputBorder(),
@@ -173,6 +181,18 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _gNumberController,
+                        textCapitalization: TextCapitalization.characters,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[a-zA-Z0-9]'),
+                          ),
+                          LengthLimitingTextInputFormatter(15),
+                          TextInputFormatter.withFunction(
+                                (oldValue, newValue) => newValue.copyWith(
+                              text: newValue.text.toUpperCase(),
+                            ),
+                          ),
+                        ],
                         decoration: const InputDecoration(
                           labelText: 'G Number (optional)',
                           border: OutlineInputBorder(),
@@ -183,6 +203,10 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
                       TextFormField(
                         controller: _aNumberController,
                         keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(12),
+                        ],
                         decoration: const InputDecoration(
                           labelText: 'A Number (optional)',
                           border: OutlineInputBorder(),

@@ -208,8 +208,10 @@ class _HomeScreenState extends State<HomeScreen>
               ),
               const SizedBox(height: 16),
               FilledButton.icon(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoutes.lockPerson);
+                onPressed: () async {
+                  await Navigator.of(context).pushNamed(AppRoutes.lockPerson);
+                  if (!mounted) return;
+                  _loadMyLocks();
                 },
                 icon: const Icon(Icons.person_add_alt_1_outlined),
                 label: const Text('Lock a new person'),

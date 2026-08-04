@@ -23,10 +23,7 @@ class _ConfirmLockScreenState extends State<ConfirmLockScreen> {
     if (args != null && _person == null) {
       _person = args['existingPerson'] as Map<String, dynamic>;
       _initialDescription = args['description'] as String?;
-      _descriptionController.text =
-          _initialDescription?.isNotEmpty == true
-              ? _initialDescription!
-              : _person!['description'] as String? ?? '';
+      _descriptionController.text = _initialDescription ?? '';
     }
   }
 
