@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
   const AdminDashboardScreen({super.key});
@@ -69,7 +70,7 @@ class AdminDashboardScreen extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).pushNamed(
                   AppRoutes.adminUserList,
-                );  
+                );
                 },
               ),
               const SizedBox(height: 16),
