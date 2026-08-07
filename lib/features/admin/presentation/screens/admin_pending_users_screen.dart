@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/admin_repository.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class AdminPendingUsersScreen extends StatefulWidget {
   const AdminPendingUsersScreen({super.key});
@@ -116,32 +117,46 @@ class _AdminPendingUsersScreenState extends State<AdminPendingUsersScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.canvas,
       appBar: AppBar(
-        title: const Text('Pending Approvals'),
+        backgroundColor: AppColors.canvas,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        foregroundColor: AppColors.ink,
+        title: const Text(
+          'Pending Approvals',
+          style: AppTypography.cardTitle,
+        ),
       ),
       body: RefreshIndicator(
+        color: AppColors.ink,
         onRefresh: _loadPendingUsers,
         child: Builder(
           builder: (context) {
             if (_isLoading) {
               return const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  color: AppColors.ink,
+                ),
               );
             }
 
             if (_errorMessage != null) {
               return Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         _errorMessage!,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.red),
+                        style: AppTypography.body.copyWith(
+                          color: AppColors.signalRed,
+                        ),
                       ),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
+                      const SizedBox(height: AppSpacing.md),
+                      OutlinedButton.icon(
                         onPressed: _loadPendingUsers,
                         icon: const Icon(Icons.refresh),
                         label: const Text('Retry'),
@@ -154,15 +169,19 @@ class _AdminPendingUsersScreenState extends State<AdminPendingUsersScreen>
 
             if (_pendingUsers.isEmpty) {
               return const Center(
-                child: Text('No pending approvals right now.'),
+                child: Text(
+                  'No pending approvals right now.',
+                  style: AppTypography.body,
+                ),
               );
             }
 
             return ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               itemCount: _pendingUsers.length,
               itemBuilder: (context, index) {
                 final user = _pendingUsers[index];
+
                 return _PendingUserCard(
                   user: user,
                   onApprove: () => _confirmAction(
@@ -202,66 +221,82 @@ class _PendingUserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.blockCream,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(
+          color: AppColors.hairline,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            user['firm_name'] as String? ?? 'Unknown Firm',
+            style: AppTypography.cardTitle,
+          ),
+
+          const SizedBox(height: AppSpacing.xs),
+
+          Text(
+            user['full_name'] as String? ?? '',
+            style: AppTypography.bodySm,
+          ),
+
+          const SizedBox(height: 2),
+
+          Text(
+            '+91 ${user['phone'] as String? ?? ''}',
+            style: AppTypography.bodySm,
+          ),
+
+          if (user['firm_location'] != null &&
+              (user['firm_location'] as String).isNotEmpty) ...[
+            const SizedBox(height: 2),
             Text(
-              user['firm_name'] as String? ?? 'Unknown Firm',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+              user['firm_location'] as String,
+              style: AppTypography.bodySm,
+            ),
+          ],
+
+          const SizedBox(height: AppSpacing.md),
+
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: onApprove,
+                  icon: const Icon(Icons.check, size: 18),
+                  label: const Text('Approve'),
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              user['full_name'] as String? ?? '',
-              style: const TextStyle(color: Colors.black54),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '+91 ${user['phone'] as String? ?? ''}',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
-              ),
-            ),
-            if (user['firm_location'] != null &&
-                (user['firm_location'] as String).isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                user['firm_location'] as String,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
+
+              const SizedBox(width: AppSpacing.sm),
+
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: onReject,
+                  icon: const Icon(Icons.close, size: 18),
+                  label: const Text('Reject'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.ink,
+                    side: const BorderSide(
+                      color: AppColors.hairline,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        AppRadius.pill,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: onApprove,
-                    icon: const Icon(Icons.check, size: 18),
-                    label: const Text('Approve'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: onReject,
-                    icon: const Icon(Icons.close, size: 18),
-                    label: const Text('Reject'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
