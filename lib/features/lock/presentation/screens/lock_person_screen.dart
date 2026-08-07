@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../admin/data/search_repository.dart';
 import 'package:flutter/services.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class LockPersonScreen extends StatefulWidget {
   const LockPersonScreen({super.key});
@@ -119,131 +120,168 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.canvas,
       appBar: AppBar(
-        title: const Text('Lock a Person'),
+        backgroundColor: AppColors.canvas,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        foregroundColor: AppColors.ink,
+        title: const Text('Lock a Person', style: AppTypography.cardTitle),
       ),
       body: SafeArea(
         child: _isChecking
             ? const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 48),
-                      child: LinearProgressIndicator(),
-                    ),
-                    SizedBox(height: 24),
-                    Text('Checking records...'),
-                  ],
-                ),
-              )
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 48),
+                child: LinearProgressIndicator(color: AppColors.ink),
+              ),
+              SizedBox(height: AppSpacing.lg),
+              Text('Checking records...', style: AppTypography.body),
+            ],
+          ),
+        )
             : Padding(
-                padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: _formKey,
-                  child: ListView(
-                    children: [
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Full Name',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Enter the person\'s full name.';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        decoration: const InputDecoration(
-                          labelText: 'Phone Number',
-                          border: OutlineInputBorder(),
-                          hintText: '10 digits',
-                        ),
-                        validator: (value) {
-                          final digits =
-                              value?.replaceAll(RegExp(r'\D'), '') ?? '';
-                          if (!RegExp(r'^\d{10}$').hasMatch(digits)) {
-                            return 'Enter a valid 10-digit phone number.';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _gNumberController,
-                        textCapitalization: TextCapitalization.characters,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r'[a-zA-Z0-9]'),
-                          ),
-                          LengthLimitingTextInputFormatter(15),
-                          TextInputFormatter.withFunction(
-                                (oldValue, newValue) => newValue.copyWith(
-                              text: newValue.text.toUpperCase(),
-                            ),
-                          ),
-                        ],
-                        decoration: const InputDecoration(
-                          labelText: 'G Number (optional)',
-                          border: OutlineInputBorder(),
-                          hintText: '15 alphanumeric characters',
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _aNumberController,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(12),
-                        ],
-                        decoration: const InputDecoration(
-                          labelText: 'A Number (optional)',
-                          border: OutlineInputBorder(),
-                          hintText: '12 digits',
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _descriptionController,
-                        maxLines: 3,
-                        decoration: const InputDecoration(
-                          labelText: 'Description (optional)',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      FilledButton(
-                        onPressed: _isSubmitting ? null : _handleLock,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          child: _isSubmitting
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text('Lock Person'),
-                        ),
-                      ),
-                    ],
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: const BoxDecoration(
+                    color: AppColors.blockBlush,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.person_add_alt_1_outlined,
+                    size: 32,
+                    color: AppColors.signalRed,
                   ),
                 ),
-              ),
+                const SizedBox(height: AppSpacing.md),
+                const Text(
+                  'Add the details you have. Only phone number is '
+                      'required — G/A numbers help catch repeat scammers.',
+                  style: AppTypography.bodySm,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                TextFormField(
+                  controller: _nameController,
+                  style: AppTypography.body,
+                  decoration: const InputDecoration(
+                    labelText: 'Full Name',
+                    prefixIcon:
+                    Icon(Icons.person_outline, color: AppColors.ink),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Enter the person\'s full name.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TextFormField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  style: AppTypography.body,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(10),
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: 'Phone Number',
+                    hintText: '10 digits',
+                    prefixIcon:
+                    Icon(Icons.phone_outlined, color: AppColors.ink),
+                  ),
+                  validator: (value) {
+                    final digits =
+                        value?.replaceAll(RegExp(r'\D'), '') ?? '';
+                    if (!RegExp(r'^\d{10}$').hasMatch(digits)) {
+                      return 'Enter a valid 10-digit phone number.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TextFormField(
+                  controller: _gNumberController,
+                  textCapitalization: TextCapitalization.characters,
+                  style: AppTypography.body,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-Z0-9]'),
+                    ),
+                    LengthLimitingTextInputFormatter(15),
+                    TextInputFormatter.withFunction(
+                          (oldValue, newValue) => newValue.copyWith(
+                        text: newValue.text.toUpperCase(),
+                      ),
+                    ),
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: 'G Number (optional)',
+                    hintText: '15 alphanumeric characters',
+                    prefixIcon: Icon(Icons.badge_outlined,
+                        color: AppColors.ink),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TextFormField(
+                  controller: _aNumberController,
+                  keyboardType: TextInputType.phone,
+                  style: AppTypography.body,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(12),
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: 'A Number (optional)',
+                    hintText: '12 digits',
+                    prefixIcon: Icon(Icons.pin_outlined,
+                        color: AppColors.ink),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TextFormField(
+                  controller: _descriptionController,
+                  maxLines: 3,
+                  style: AppTypography.body,
+                  decoration: const InputDecoration(
+                    labelText: 'Description (optional)',
+                    alignLabelWithHint: true,
+                    prefixIcon: Icon(Icons.notes_outlined,
+                        color: AppColors.ink),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                FilledButton(
+                  onPressed: _isSubmitting ? null : _handleLock,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.xs),
+                    child: _isSubmitting
+                        ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.canvas,
+                      ),
+                    )
+                        : const Text('Lock Person'),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      );
+      ),
+    );
   }
 }
