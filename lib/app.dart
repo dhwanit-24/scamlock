@@ -14,6 +14,7 @@ import 'features/home/presentation/screens/home_screen.dart';
 import 'features/lock/presentation/screens/confirm_lock_screen.dart';
 import 'features/lock/presentation/screens/lock_person_screen.dart';
 import 'features/auth/presentation/screens/auth_gate_screen.dart';
+import 'core/theme/app_theme.dart';
 
 class ScamLockApp extends StatelessWidget {
   const ScamLockApp({super.key});
@@ -23,12 +24,7 @@ class ScamLockApp extends StatelessWidget {
     return MaterialApp(
       title: 'ScamLock',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFB42318),
-        ),
-        useMaterial3: true,
-      ),
+      theme: buildAppTheme(),
       home: const AuthGateScreen(),
       routes: {
         AppRoutes.login: (_) => const LoginScreen(),
