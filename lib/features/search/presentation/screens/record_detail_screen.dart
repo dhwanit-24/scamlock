@@ -185,7 +185,7 @@ class _RecordDetailScreenState extends State<RecordDetailScreen>
                   foregroundColor: AppColors.canvas,
                   textStyle: AppTypography.button,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
+                    horizontal: AppSpacing.md,
                     vertical: AppSpacing.sm,
                   ),
                   shape: RoundedRectangleBorder(
@@ -308,7 +308,8 @@ class _PersonInfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.blockLime,
+        color: AppColors.canvas,
+        border: Border.all(color: AppColors.hairline),
         borderRadius: BorderRadius.circular(AppRadius.lg),
       ),
       child: Column(

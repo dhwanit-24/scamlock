@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:flutter/services.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../auth/data/auth_repository.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -156,6 +156,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           keyboardType: TextInputType.phone,
                           enabled: !_isSubmitting,
                           style: AppTypography.body,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                          ],
                           decoration: const InputDecoration(
                             labelText: 'Phone number',
                             prefixIcon: Icon(

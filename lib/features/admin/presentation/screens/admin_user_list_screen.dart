@@ -176,8 +176,6 @@ class _AdminUserListScreenState extends State<AdminUserListScreen>
 
   @override
   Widget build(BuildContext context) {
-    final pendingCount =
-        _users.where((u) => u['account_status'] == 'pending').length;
     final activeCount =
         _users.where((u) => u['account_status'] == 'active').length;
     final suspendedCount =
@@ -230,9 +228,6 @@ class _AdminUserListScreenState extends State<AdminUserListScreen>
                   child: Row(
                     children: [
                       _buildFilterChip('All', 'all', _users.length),
-                      const SizedBox(width: 8),
-                      _buildFilterChip(
-                          'Pending', 'pending', pendingCount),
                       const SizedBox(width: 8),
                       _buildFilterChip(
                           'Active', 'active', activeCount),
