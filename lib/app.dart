@@ -11,9 +11,12 @@ import 'features/admin/presentation/screens/admin_audit_log_screen.dart';
 import 'features/search/presentation/screens/search_screen.dart';
 import 'features/search/presentation/screens/record_detail_screen.dart';
 import 'features/home/presentation/screens/home_screen.dart';
+import 'features/home/presentation/screens/my_locks_screen.dart';
+import 'features/home/presentation/screens/profile_screen.dart';
 import 'features/lock/presentation/screens/confirm_lock_screen.dart';
 import 'features/lock/presentation/screens/lock_person_screen.dart';
 import 'features/auth/presentation/screens/auth_gate_screen.dart';
+import 'core/theme/app_theme.dart';
 
 class ScamLockApp extends StatelessWidget {
   const ScamLockApp({super.key});
@@ -23,12 +26,7 @@ class ScamLockApp extends StatelessWidget {
     return MaterialApp(
       title: 'ScamLock',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFB42318),
-        ),
-        useMaterial3: true,
-      ),
+      theme: buildAppTheme(),
       home: const AuthGateScreen(),
       routes: {
         AppRoutes.login: (_) => const LoginScreen(),
@@ -42,6 +40,8 @@ class ScamLockApp extends StatelessWidget {
         AppRoutes.search: (_) => const SearchScreen(),
         AppRoutes.recordDetail: (_) => const RecordDetailScreen(),
         AppRoutes.lockPerson: (_) => const LockPersonScreen(),
+        AppRoutes.myLocks: (_) => const MyLocksScreen(),
+        AppRoutes.profile: (_) => const ProfileScreen(),
         AppRoutes.confirmLock: (_) => const ConfirmLockScreen(),
       },
     );

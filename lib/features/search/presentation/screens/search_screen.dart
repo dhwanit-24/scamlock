@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../admin/data/search_repository.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -75,13 +76,18 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.canvas,
       appBar: AppBar(
-        title: const Text('Search'),
+        backgroundColor: AppColors.canvas,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        foregroundColor: AppColors.ink,
+        title: const Text('Search', style: AppTypography.cardTitle),
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Row(
               children: [
                 Expanded(
@@ -89,19 +95,25 @@ class _SearchScreenState extends State<SearchScreen> {
                     controller: _queryController,
                     focusNode: _focusNode,
                     autofocus: true,
+                    style: AppTypography.body,
                     decoration: const InputDecoration(
                       labelText: 'Phone, G Number, or Name',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.search),
+                      prefixIcon: Icon(Icons.search, color: AppColors.ink),
                     ),
                     onSubmitted: (_) => _performSearch(),
                   ),
                 ),
-                const SizedBox(width: 12),
-                IconButton(
-                  onPressed: _performSearch,
-                  icon: const Icon(Icons.arrow_forward),
-                  tooltip: 'Search',
+                const SizedBox(width: AppSpacing.sm),
+                Container(
+                  decoration: const BoxDecoration(
+                    color: AppColors.ink,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: _performSearch,
+                    icon: const Icon(Icons.arrow_forward, color: AppColors.canvas),
+                    tooltip: 'Search',
+                  ),
                 ),
               ],
             ),
@@ -111,18 +123,20 @@ class _SearchScreenState extends State<SearchScreen> {
               builder: (context) {
                 if (_isLoading) {
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(color: AppColors.ink),
                   );
                 }
 
                 if (_errorMessage != null) {
                   return Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(AppSpacing.lg),
                       child: Text(
                         _errorMessage!,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.red),
+                        style: AppTypography.body.copyWith(
+                          color: AppColors.signalRed,
+                        ),
                       ),
                     ),
                   );
@@ -130,21 +144,33 @@ class _SearchScreenState extends State<SearchScreen> {
 
                 if (_results.isEmpty && _queryController.text.isNotEmpty) {
                   return const Center(
-                    child: Text('No results found.'),
+                    child: Text(
+                      'No results found.',
+                      style: AppTypography.body,
+                    ),
                   );
                 }
 
                 if (_results.isEmpty) {
                   return const Center(
-                    child: Text(
-                      'Enter a phone number, G Number, or name to search.',
-                      textAlign: TextAlign.center,
+                    child: Padding(
+                      padding: EdgeInsets.all(AppSpacing.lg),
+                      child: Text(
+                        'Enter a phone number, G Number, or name to search.',
+                        textAlign: TextAlign.center,
+                        style: AppTypography.body,
+                      ),
                     ),
                   );
                 }
 
                 return ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    0,
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                  ),
                   itemCount: _results.length,
                   itemBuilder: (context, index) {
                     final person = _results[index];
@@ -186,31 +212,68 @@ class _SearchResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        title: Text(
-          fullName,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+    final isFlagged = lockCount > 0;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.canvas,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: AppColors.hairline),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        fullName,
+                        style: AppTypography.cardTitle,
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        '+91 $phoneNo',
+                        style: AppTypography.body,
+                      ),
+                      if (isFlagged)
+                        Padding(
+                          padding: const EdgeInsets.only(top: AppSpacing.xs),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.xs,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.blockBlush,
+                              borderRadius:
+                              BorderRadius.circular(AppRadius.pill),
+                            ),
+                            child: Text(
+                              '$lockCount lock${lockCount == 1 ? '' : 's'}',
+                              style: AppTypography.bodySm.copyWith(
+                                color: AppColors.signalRed,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: AppColors.ink),
+              ],
+            ),
           ),
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 4),
-            Text('+91 $phoneNo'),
-            if (lockCount > 0)
-              Text(
-                '$lockCount lock${lockCount == 1 ? '' : 's'}',
-                style: const TextStyle(color: Colors.red),
-              ),
-          ],
-        ),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: onTap,
       ),
     );
   }

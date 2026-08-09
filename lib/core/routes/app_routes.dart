@@ -11,4 +11,6 @@ abstract final class AppRoutes {
   static const search = '/search';
   static const confirmLock = '/confirm-lock';
   static const lockPerson = '/lock-person';
+  static const myLocks = '/my-locks';
+  static const profile = '/profile';
 }

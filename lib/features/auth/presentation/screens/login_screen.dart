@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:flutter/services.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../auth/data/auth_repository.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -105,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
@@ -116,44 +117,55 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         const Spacer(),
 
-                        const Icon(
-                          Icons.shield_outlined,
-                          size: 72,
-                          color: Color(0xFFB42318),
+                        Center(
+                          child: Container(
+                            width: 88,
+                            height: 88,
+                            decoration: const BoxDecoration(
+                              color: AppColors.signalRed,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.shield_outlined,
+                              size: 44,
+                              color: AppColors.canvas,
+                            ),
+                          ),
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: AppSpacing.lg),
 
                         const Text(
                           'ScamLock',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppTypography.headline,
                         ),
 
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppSpacing.xxs),
 
                         const Text(
                           'Check before you transact.',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 16,
-                          ),
+                          style: AppTypography.body,
                         ),
 
-                        const SizedBox(height: 48),
+                        const SizedBox(height: AppSpacing.xxl),
 
                         TextFormField(
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
                           enabled: !_isSubmitting,
+                          style: AppTypography.body,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                          ],
                           decoration: const InputDecoration(
                             labelText: 'Phone number',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.phone_outlined),
+                            prefixIcon: Icon(
+                              Icons.phone_outlined,
+                              color: AppColors.ink,
+                            ),
                           ),
                           validator: (value) {
                             final digitsOnly =
@@ -167,21 +179,25 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
 
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AppSpacing.md),
 
                         TextFormField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
                           enabled: !_isSubmitting,
+                          style: AppTypography.body,
                           decoration: InputDecoration(
                             labelText: 'Password',
-                            border: const OutlineInputBorder(),
-                            prefixIcon: const Icon(Icons.lock_outline),
+                            prefixIcon: const Icon(
+                              Icons.lock_outline,
+                              color: AppColors.ink,
+                            ),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword
                                     ? Icons.visibility_outlined
                                     : Icons.visibility_off_outlined,
+                                color: AppColors.ink,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -198,26 +214,28 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
 
-                        const SizedBox(height: 24),
+                        const SizedBox(height: AppSpacing.lg),
 
                         FilledButton(
                           onPressed: _isSubmitting ? null : _handleSignIn,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppSpacing.xs,
+                            ),
                             child: _isSubmitting
                                 ? const SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: AppColors.canvas,
                               ),
                             )
                                 : const Text('Sign in'),
                           ),
                         ),
 
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AppSpacing.sm),
 
                         TextButton(
                           onPressed: () {
