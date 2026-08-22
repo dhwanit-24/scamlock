@@ -87,7 +87,21 @@ class _HomeScreenState extends State<HomeScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
-        title: const Text('Sign out?', style: AppTypography.cardTitle),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/icon/icon.png',
+              width: 28,
+              height: 28,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            const Text(
+              'ScamLock',
+              style: AppTypography.cardTitle,
+            ),
+          ],
+        ),
         content: const Text(
           'You will be signed out of ScamLock.',
           style: AppTypography.body,
@@ -115,97 +129,197 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.canvas,
+
       appBar: AppBar(
         backgroundColor: AppColors.canvas,
         elevation: 0,
         scrolledUnderElevation: 0,
         foregroundColor: AppColors.ink,
         titleSpacing: AppSpacing.lg,
-        title: const Text('ScamLock', style: AppTypography.cardTitle),
+        title: const SizedBox.shrink(),
         actions: [
           IconButton(
             onPressed: _confirmSignOut,
-            icon: const Icon(Icons.logout, color: AppColors.ink),
+            icon: const Icon(
+              Icons.logout,
+              color: AppColors.ink,
+            ),
             tooltip: 'Sign out',
           ),
           const SizedBox(width: AppSpacing.xs),
         ],
       ),
+
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            AppSpacing.xs,
-            AppSpacing.lg,
-            0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Check before you transact.',
-                textAlign: TextAlign.center,
-                style: AppTypography.subhead,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushNamed(AppRoutes.search);
-                },
-                child: AbsorbPointer(
-                  child: TextField(
-                    style: AppTypography.body,
-                    decoration: const InputDecoration(
-                      labelText: 'Search by phone, G Number, or Name',
-                      prefixIcon: Icon(Icons.search, color: AppColors.ink),
-                    ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    AppSpacing.sm,
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: AppSpacing.sm),
+
+                      // ScamLock brand mark
+                      Column(
+                        children: [
+                          SizedBox(
+                            height: constraints.maxHeight * 0.10,
+                          ),
+
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Icon(
+                                Icons.shield_outlined,
+                                size: constraints.maxWidth * 0.50,
+                                color: AppColors.ink,
+                              ),
+                              Icon(
+                                Icons.lock,
+                                size: constraints.maxWidth * 0.09,
+                                color: AppColors.signalRed,
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: AppSpacing.sm),
+
+                          Text(
+                            'ScamLock',
+                            style: AppTypography.cardTitle.copyWith(
+                              fontSize: 29,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: AppSpacing.xl),
+
+                      // Lock a new person
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: () async {
+                            await Navigator.of(context)
+                                .pushNamed(AppRoutes.lockPerson);
+                          },
+                          icon: const Icon(
+                            Icons.person_add_alt_1_outlined,
+                          ),
+                          label: const Text('Lock a new person'),
+                        ),
+                      ),
+
+                      const SizedBox(height: AppSpacing.md),
+
+                      // Search
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context)
+                              .pushNamed(AppRoutes.search);
+                        },
+                        child: AbsorbPointer(
+                          child: TextField(
+                            style: AppTypography.body,
+                            decoration: const InputDecoration(
+                              labelText:
+                              'Search by phone, G Number, or Name',
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: AppColors.ink,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: AppSpacing.md),
+
+                      // Tagline
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.verified_user_outlined,
+                            size: 15,
+                            color: AppColors.ink,
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          Text(
+                            'Check before you transact.',
+                            style: AppTypography.subhead.copyWith(
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: AppSpacing.xl),
+                    ],
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.md),
-              FilledButton.icon(
-                onPressed: () async {
-                  await Navigator.of(context).pushNamed(AppRoutes.lockPerson);
-                },
-                icon: const Icon(Icons.person_add_alt_1_outlined),
-                label: const Text('Lock a new person'),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                decoration: BoxDecoration(
-                  color: AppColors.canvas,
-                  border: Border(
-                    top: BorderSide(color: AppColors.hairline),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(AppRoutes.myLocks);
-                        },
-                        icon: const Icon(Icons.lock_outline),
-                        label: const Text('My Locks'),
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: FilledButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(AppRoutes.profile);
-                        },
-                        icon: const Icon(Icons.person_outline),
-                        label: const Text('Profile'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
+      ),
+
+      bottomNavigationBar: NavigationBar(
+        height: 72,
+        backgroundColor: AppColors.canvas,
+        elevation: 0,
+        indicatorColor: Colors.transparent,
+        labelBehavior:
+        NavigationDestinationLabelBehavior.alwaysShow,
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(
+              Icons.lock_outline,
+              color: AppColors.ink,
+            ),
+            selectedIcon: Icon(
+              Icons.lock_outline,
+              color: AppColors.ink,
+            ),
+            label: 'My Locks',
+          ),
+          NavigationDestination(
+            icon: Icon(
+              Icons.person_outline,
+              color: AppColors.ink,
+            ),
+            selectedIcon: Icon(
+              Icons.person_outline,
+              color: AppColors.ink,
+            ),
+            label: 'Profile',
+          ),
+        ],
+        onDestinationSelected: (index) {
+          if (index == 0) {
+            Navigator.of(context).pushNamed(
+              AppRoutes.myLocks,
+            );
+          } else if (index == 1) {
+            Navigator.of(context).pushNamed(
+              AppRoutes.profile,
+            );
+          }
+        },
       ),
     );
   }
