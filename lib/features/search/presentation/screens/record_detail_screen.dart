@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../admin/data/search_repository.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../lock/presentation/screens/confirm_lock_screen.dart';
 
 String _resolveName(Map<String, dynamic> entry, String key) {
   final map = entry[key] as Map<String, dynamic>?;
@@ -128,6 +129,20 @@ class _RecordDetailScreenState extends State<RecordDetailScreen>
     final hasActiveLock = _myLock != null && _myLock!['status'] == 'locked';
     final newStatus = hasActiveLock ? 'unlocked' : 'locked';
 
+    if (!hasActiveLock) {
+      await Navigator.of(context).pushNamed(
+        '/confirm-lock',
+        arguments: {
+          'existingPerson': _person,
+        },
+      );
+
+      if (!mounted) return;
+
+      _loadData();
+      return;
+    }
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -162,7 +177,17 @@ class _RecordDetailScreenState extends State<RecordDetailScreen>
 
     try {
       if (_myLock == null) {
-        await _searchRepository.createPersonLock(personId);
+        await Navigator.of(context).pushNamed(
+          '/confirm-lock',
+          arguments: {
+            'existingPerson': _person,
+          },
+        );
+
+        if (!mounted) return;
+
+        _loadData();
+        return;
       } else {
         await _searchRepository.updateMyLockStatus(personId, newStatus);
       }

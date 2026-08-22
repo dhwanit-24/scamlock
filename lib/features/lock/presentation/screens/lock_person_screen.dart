@@ -20,7 +20,6 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
   final _descriptionController = TextEditingController();
 
   bool _isSubmitting = false;
-  bool _isChecking = false;
 
   @override
   void dispose() {
@@ -36,10 +35,6 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-
-    setState(() {
-      _isChecking = true;
-    });
 
     List<Map<String, dynamic>> existing = [];
     try {
@@ -67,13 +62,13 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
         arguments: {
           'existingPerson': person,
           'description': _descriptionController.text.trim(),
+          'successRoute': '/my-locks',
         },
       );
       return;
     }
 
     setState(() {
-      _isChecking = false;
       _isSubmitting = true;
     });
 
@@ -109,10 +104,6 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
       );
     } finally {
       if (mounted) {
-        setState(() {
-          _isChecking = false;
-          _isSubmitting = false;
-        });
       }
     }
   }
@@ -129,21 +120,7 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
         title: const Text('Lock a Person', style: AppTypography.cardTitle),
       ),
       body: SafeArea(
-        child: _isChecking
-            ? const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 48),
-                child: LinearProgressIndicator(color: AppColors.ink),
-              ),
-              SizedBox(height: AppSpacing.lg),
-              Text('Checking records...', style: AppTypography.body),
-            ],
-          ),
-        )
-            : Padding(
+        child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Form(
             key: _formKey,

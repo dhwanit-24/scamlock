@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../admin/data/search_repository.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/routes/app_routes.dart';
 
 class ConfirmLockScreen extends StatefulWidget {
   const ConfirmLockScreen({super.key});
@@ -15,6 +16,8 @@ class _ConfirmLockScreenState extends State<ConfirmLockScreen> {
   bool _isSubmitting = false;
   Map<String, dynamic>? _person;
   String? _initialDescription;
+  bool _returnToMyLocks = false;
+  String? _successRoute;
 
   @override
   void didChangeDependencies() {
@@ -25,6 +28,7 @@ class _ConfirmLockScreenState extends State<ConfirmLockScreen> {
       _person = args['existingPerson'] as Map<String, dynamic>;
       _initialDescription = args['description'] as String?;
       _descriptionController.text = _initialDescription ?? '';
+      _successRoute = args['successRoute'] as String?;
     }
   }
 
@@ -51,7 +55,11 @@ class _ConfirmLockScreenState extends State<ConfirmLockScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Person locked successfully.')),
       );
-      Navigator.of(context).pop();
+      if (_successRoute != null) {
+        Navigator.of(context).pushReplacementNamed(_successRoute!);
+      } else {
+        Navigator.of(context).pop();
+      }
     } catch (error) {
       debugPrint('Confirm lock error: $error');
       if (!mounted) return;

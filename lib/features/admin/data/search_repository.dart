@@ -76,9 +76,30 @@ class SearchRepository {
   }
 
   Future<void> createPersonLock(String personId, {String? note}) async {
+    final currentUserId = _client.auth.currentUser!.id;
+
+    final existingLock = await _client
+        .from('person_locks')
+        .select('id')
+        .eq('person_id', personId)
+        .eq('locked_by', currentUserId)
+        .maybeSingle();
+
+    if (existingLock != null) {
+      await _client
+          .from('person_locks')
+          .update({
+        'status': 'locked',
+        'locked_on': DateTime.now().toUtc().toIso8601String(),
+        if (note != null && note.isNotEmpty) 'note': note,
+      })
+          .eq('id', existingLock['id']);
+      return;
+    }
+
     await _client.from('person_locks').insert({
       'person_id': personId,
-      'locked_by': _client.auth.currentUser!.id,
+      'locked_by': currentUserId,
       'status': 'locked',
       if (note != null && note.isNotEmpty) 'note': note,
     });
