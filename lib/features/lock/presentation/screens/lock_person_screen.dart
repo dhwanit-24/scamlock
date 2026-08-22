@@ -189,22 +189,26 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   style: AppTypography.body,
+                  maxLength: 10,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(10),
                   ],
                   decoration: const InputDecoration(
                     labelText: 'Phone Number',
                     hintText: '10 digits',
-                    prefixIcon:
-                    Icon(Icons.phone_outlined, color: AppColors.ink),
+                    prefixIcon: Icon(
+                      Icons.phone_outlined,
+                      color: AppColors.ink,
+                    ),
                   ),
                   validator: (value) {
                     final digits =
                         value?.replaceAll(RegExp(r'\D'), '') ?? '';
+
                     if (!RegExp(r'^\d{10}$').hasMatch(digits)) {
                       return 'Enter a valid 10-digit phone number.';
                     }
+
                     return null;
                   },
                 ),
@@ -213,11 +217,11 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
                   controller: _gNumberController,
                   textCapitalization: TextCapitalization.characters,
                   style: AppTypography.body,
+                  maxLength: 15,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(
                       RegExp(r'[a-zA-Z0-9]'),
                     ),
-                    LengthLimitingTextInputFormatter(15),
                     TextInputFormatter.withFunction(
                           (oldValue, newValue) => newValue.copyWith(
                         text: newValue.text.toUpperCase(),
@@ -227,25 +231,55 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
                   decoration: const InputDecoration(
                     labelText: 'G Number (optional)',
                     hintText: '15 alphanumeric characters',
-                    prefixIcon: Icon(Icons.badge_outlined,
-                        color: AppColors.ink),
+                    prefixIcon: Icon(
+                      Icons.badge_outlined,
+                      color: AppColors.ink,
+                    ),
                   ),
+                  validator: (value) {
+                    final gNumber = value?.trim() ?? '';
+
+                    if (gNumber.isEmpty) {
+                      return null;
+                    }
+
+                    if (!RegExp(r'^[A-Z0-9]{15}$').hasMatch(gNumber)) {
+                      return 'G Number must contain exactly 15 alphanumeric characters.';
+                    }
+
+                    return null;
+                  },
                 ),
                 const SizedBox(height: AppSpacing.md),
                 TextFormField(
                   controller: _aNumberController,
                   keyboardType: TextInputType.phone,
                   style: AppTypography.body,
+                  maxLength: 12,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(12),
                   ],
                   decoration: const InputDecoration(
                     labelText: 'A Number (optional)',
                     hintText: '12 digits',
-                    prefixIcon: Icon(Icons.pin_outlined,
-                        color: AppColors.ink),
+                    prefixIcon: Icon(
+                      Icons.pin_outlined,
+                      color: AppColors.ink,
+                    ),
                   ),
+                  validator: (value) {
+                    final digits = value?.trim() ?? '';
+
+                    if (digits.isEmpty) {
+                      return null;
+                    }
+
+                    if (!RegExp(r'^\d{12}$').hasMatch(digits)) {
+                      return 'A Number must contain exactly 12 digits.';
+                    }
+
+                    return null;
+                  },
                 ),
                 const SizedBox(height: AppSpacing.md),
                 TextFormField(

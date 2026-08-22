@@ -144,4 +144,23 @@ class SearchRepository {
       .order('locked_on', ascending: false);
   return response;
 }
+
+  Future<Map<String, dynamic>?> getLockingFirmDetails({
+    required String personId,
+    required String firmId,
+  }) async {
+    final result = await _client.rpc(
+      'get_locking_firm_details',
+      params: {
+        'p_person_id': personId,
+        'p_firm_id': firmId,
+      },
+    );
+
+    if (result.isEmpty) {
+      return null;
+    }
+
+    return Map<String, dynamic>.from(result.first);
+  }
 }

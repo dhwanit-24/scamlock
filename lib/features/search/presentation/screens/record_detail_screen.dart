@@ -79,12 +79,34 @@ class _RecordDetailScreenState extends State<RecordDetailScreen>
 
     try {
       final locks = await _searchRepository.getPersonLocks(personId);
+
+      final locksWithFirmDetails = await Future.wait(
+        locks.map((lock) async {
+          final firmId = lock['locked_by'] as String?;
+
+          if (firmId == null || firmId.isEmpty) {
+            return lock;
+          }
+
+          final firmDetails =
+          await _searchRepository.getLockingFirmDetails(
+            personId: personId,
+            firmId: firmId,
+          );
+
+          return {
+            ...lock,
+            'locking_firm_details': firmDetails,
+          };
+        }),
+      );
+
       final events = await _searchRepository.getPersonLockEvents(personId);
       final myLock = await _searchRepository.findMyLock(personId);
 
       if (!mounted) return;
       setState(() {
-        _locks = locks;
+        _locks = locksWithFirmDetails;
         _events = events;
         _myLock = myLock;
         _isLoading = false;
@@ -362,80 +384,286 @@ class _LockCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locker = lock['locker'] as Map<String, dynamic>?;
-    final firmName = locker?['firm_name'] as String? ?? 'Unknown';
-    final location = locker?['firm_location'] as String? ?? '';
-    final status = lock['status'] as String? ?? 'locked';
-    final lockedOn = lock['locked_on'] as String? ?? '';
-    final unlockedOn = lock['unlocked_on'] as String?;
-    final note = lock['note'] as String?;
+    final firmDetails =
+    lock['locking_firm_details'] as Map<String, dynamic>?;
+
+    final firmName =
+        firmDetails?['firm_name'] as String? ?? 'Unknown';
+
+    final ownerName =
+        firmDetails?['full_name'] as String? ?? '';
+
+    final location =
+        firmDetails?['firm_location'] as String? ?? '';
+
+    final phone =
+        firmDetails?['phone'] as String? ?? '';
+
+    final status =
+        lock['status'] as String? ?? 'locked';
+
+    final lockedOn =
+        lock['locked_on'] as String? ?? '';
+
+    final unlockedOn =
+    lock['unlocked_on'] as String?;
+
+    final note =
+    lock['note'] as String?;
+
     final isLocked = status == 'locked';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      padding: const EdgeInsets.all(AppSpacing.md),
+      margin: const EdgeInsets.only(
+        bottom: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: AppColors.canvas,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.hairline),
+        borderRadius: BorderRadius.circular(
+          AppRadius.md,
+        ),
+        border: Border.all(
+          color: AppColors.hairline,
+        ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(firmName, style: AppTypography.cardTitle),
-                if (location.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(location, style: AppTypography.bodySm),
-                  ),
-                if (lockedOn.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: AppSpacing.xs),
-                    child: Text(
-                      'Locked: ${lockedOn.split('T').first}',
-                      style: AppTypography.caption,
-                    ),
-                  ),
-                if (unlockedOn != null && unlockedOn.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(
-                      'Unlocked: ${unlockedOn.split('T').first}',
-                      style: AppTypography.caption,
-                    ),
-                  ),
-                if (note != null && note.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: AppSpacing.xs),
-                    child: Text(
-                      'Reason: $note',
-                      style: AppTypography.bodySm.copyWith(
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xs,
-              vertical: 2,
-            ),
-            decoration: BoxDecoration(
-              color: isLocked ? AppColors.blockBlush : AppColors.blockMint,
-              borderRadius: BorderRadius.circular(AppRadius.pill),
-            ),
-            child: Text(
-              status.toUpperCase(),
-              style: AppTypography.caption.copyWith(
-                color: isLocked ? AppColors.signalRed : AppColors.success,
-                fontWeight: FontWeight.w700,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(
+          AppRadius.md,
+        ),
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            backgroundColor: AppColors.canvas,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(AppRadius.lg),
               ),
+            ),
+            builder: (context) {
+              return SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(
+                    AppSpacing.lg,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment:
+                      CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 40,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: AppColors.hairline,
+                              borderRadius:
+                              BorderRadius.circular(
+                                AppRadius.pill,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(
+                          height: AppSpacing.lg,
+                        ),
+
+                        Text(
+                          firmName,
+                          style: AppTypography.headline,
+                        ),
+
+                        const SizedBox(
+                          height: AppSpacing.lg,
+                        ),
+
+                        if (ownerName.isNotEmpty)
+                          _FirmDetailRow(
+                            label: 'Owner',
+                            value: ownerName,
+                          ),
+
+                        if (location.isNotEmpty)
+                          _FirmDetailRow(
+                            label: 'Location',
+                            value: location,
+                          ),
+
+                        if (phone.isNotEmpty)
+                          _FirmDetailRow(
+                            label: 'Phone',
+                            value: phone,
+                          ),
+
+                        if (lockedOn.isNotEmpty)
+                          _FirmDetailRow(
+                            label: 'Locked on',
+                            value: lockedOn
+                                .split('T')
+                                .first,
+                          ),
+
+                        if (note != null &&
+                            note.isNotEmpty)
+                          _FirmDetailRow(
+                            label: 'Reason',
+                            value: note,
+                          ),
+
+                        if (unlockedOn != null &&
+                            unlockedOn.isNotEmpty)
+                          _FirmDetailRow(
+                            label: 'Unlocked on',
+                            value: unlockedOn
+                                .split('T')
+                                .first,
+                          ),
+
+                        const SizedBox(
+                          height: AppSpacing.md,
+                        ),
+
+                        Align(
+                          alignment:
+                          Alignment.centerRight,
+                          child: Container(
+                            padding:
+                            const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm,
+                              vertical: AppSpacing.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isLocked
+                                  ? AppColors.blockBlush
+                                  : AppColors.blockMint,
+                              borderRadius:
+                              BorderRadius.circular(
+                                AppRadius.pill,
+                              ),
+                            ),
+                            child: Text(
+                              status.toUpperCase(),
+                              style: AppTypography.caption
+                                  .copyWith(
+                                color: isLocked
+                                    ? AppColors.signalRed
+                                    : AppColors.success,
+                                fontWeight:
+                                FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(
+                          height: AppSpacing.md,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(
+            AppSpacing.md,
+          ),
+          child: Row(
+            crossAxisAlignment:
+            CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment:
+                  CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      firmName,
+                      style: AppTypography.cardTitle,
+                    ),
+
+                    if (lockedOn.isNotEmpty)
+                      Padding(
+                        padding:
+                        const EdgeInsets.only(
+                          top: AppSpacing.xs,
+                        ),
+                        child: Text(
+                          'Locked on ${lockedOn.split('T').first}',
+                          style:
+                          AppTypography.caption,
+                        ),
+                      ),
+
+                    if (note != null &&
+                        note.isNotEmpty)
+                      Padding(
+                        padding:
+                        const EdgeInsets.only(
+                          top: AppSpacing.xs,
+                        ),
+                        child: Text(
+                          'Reason: $note',
+                          style:
+                          AppTypography.bodySm,
+                          maxLines: 2,
+                          overflow:
+                          TextOverflow.ellipsis,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(
+                width: AppSpacing.sm,
+              ),
+
+              Icon(
+                Icons.chevron_right,
+                color: AppColors.ink,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FirmDetailRow extends StatelessWidget {
+  const _FirmDetailRow({
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: AppSpacing.md,
+      ),
+      child: Column(
+        crossAxisAlignment:
+        CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: AppTypography.caption,
+          ),
+          const SizedBox(
+            height: AppSpacing.xs,
+          ),
+          Text(
+            value,
+            style: AppTypography.body.copyWith(
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],

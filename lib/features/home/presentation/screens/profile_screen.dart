@@ -147,8 +147,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               final phone = _profile!['phone'] as String? ?? '';
               final email = _profile!['email'] as String? ?? '';
               final firmLocation = _profile!['firm_location'] as String? ?? '';
-              final role = _profile!['app_role'] as String? ?? '';
-              final status = _profile!['account_status'] as String? ?? '';
 
               return ListView(
                 padding: const EdgeInsets.only(bottom: AppSpacing.lg),
@@ -164,10 +162,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: AppSpacing.md),
                   ],
                   _ProfileRow(label: 'Firm Location', value: firmLocation),
-                  const SizedBox(height: AppSpacing.md),
-                  _ProfileRow(label: 'Role', value: role.toUpperCase()),
-                  const SizedBox(height: AppSpacing.md),
-                  _ProfileRow(label: 'Account Status', value: status.toUpperCase()),
                 ],
               );
             },
