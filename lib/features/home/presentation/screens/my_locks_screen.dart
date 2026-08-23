@@ -60,17 +60,21 @@ class _MyLocksScreenState extends State<MyLocksScreen>
     }
   }
 
-  void _openRecordDetail(Map<String, dynamic> lock) {
+  Future<void> _openRecordDetail(Map<String, dynamic> lock) async {
     final person = lock['person'] as Map<String, dynamic>?;
     if (person == null) return;
 
-    Navigator.of(context).pushNamed(
+    await Navigator.of(context).pushNamed(
       AppRoutes.recordDetail,
       arguments: {
         'personId': person['id'] as String,
         'person': person,
       },
     );
+
+    if (!mounted) return;
+
+    await _loadMyLocks();
   }
 
   int _totalLockCount(Map<String, dynamic> person) {
