@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../admin/data/search_repository.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../lock/presentation/screens/confirm_lock_screen.dart';
+import '../../../../core/widgets/app_dialogs.dart';
 
 String _resolveName(Map<String, dynamic> entry, String key) {
   final map = entry[key] as Map<String, dynamic>?;
@@ -123,6 +123,7 @@ class _RecordDetailScreenState extends State<RecordDetailScreen>
   }
 
   Future<void> _toggleMyLock() async {
+    final navigator = Navigator.of(context);
     final personId = _person?['id'] as String?;
     if (personId == null) return;
 
@@ -130,7 +131,8 @@ class _RecordDetailScreenState extends State<RecordDetailScreen>
     final newStatus = hasActiveLock ? 'unlocked' : 'locked';
 
     if (!hasActiveLock) {
-      await Navigator.of(context).pushNamed(
+
+      await navigator.pushNamed(
         '/confirm-lock',
         arguments: {
           'existingPerson': _person,
@@ -193,17 +195,19 @@ class _RecordDetailScreenState extends State<RecordDetailScreen>
       }
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(hasActiveLock ? 'Unlocked.' : 'Locked.')),
+      await AppDialogs.showSuccess(
+        context,
+        title: 'Person unlocked',
+        message: 'Your firm’s lock has been removed for this person.',
       );
       _loadData();
     } catch (error) {
       debugPrint('Toggle lock error: $error');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Something went wrong. Please try again.'),
-        ),
+      await AppDialogs.showError(
+        context,
+        title: 'Unable to update lock',
+        message: 'Something went wrong. Please try again.',
       );
     }
   }

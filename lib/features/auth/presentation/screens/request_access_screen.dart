@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/widgets/app_dialogs.dart';
 
 import '../../data/auth_repository.dart';
 import '../../../../core/routes/app_routes.dart';
@@ -77,11 +78,13 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
     }
   }
 
-  void _showMessage(String message) {
+  Future<void> _showMessage(String message) async {
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
+    await AppDialogs.showError(
+      context,
+      title: 'Request failed',
+      message: message,
     );
   }
 

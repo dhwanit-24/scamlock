@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../auth/data/auth_repository.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/app_dialogs.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -91,11 +92,13 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _showMessage(String message) {
+  Future<void> _showMessage(String message) async {
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
+    await AppDialogs.showError(
+      context,
+      title: 'Unable to sign in',
+      message: message,
     );
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../admin/data/search_repository.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/app_dialogs.dart';
 
 class LockPersonScreen extends StatefulWidget {
   const LockPersonScreen({super.key});
@@ -90,17 +91,21 @@ class _LockPersonScreenState extends State<LockPersonScreen> {
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Person locked successfully.')),
+      await AppDialogs.showSuccess(
+        context,
+        title: 'Person locked',
+        message: 'This person has been successfully added to your locks.',
       );
+      if (!mounted) return;
+      Navigator.of(context).pop();
       Navigator.of(context).pop();
     } catch (error) {
       debugPrint('Lock person error: $error');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Something went wrong. Please try again.'),
-        ),
+      await AppDialogs.showError(
+        context,
+        title: 'Unable to lock person',
+        message: 'Something went wrong. Please try again.',
       );
     } finally {
       if (mounted) {

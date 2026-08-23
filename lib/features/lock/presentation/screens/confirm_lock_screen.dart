@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../admin/data/search_repository.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/routes/app_routes.dart';
+import '../../../../core/widgets/app_dialogs.dart';
 
 class ConfirmLockScreen extends StatefulWidget {
   const ConfirmLockScreen({super.key});
@@ -16,7 +16,6 @@ class _ConfirmLockScreenState extends State<ConfirmLockScreen> {
   bool _isSubmitting = false;
   Map<String, dynamic>? _person;
   String? _initialDescription;
-  bool _returnToMyLocks = false;
   String? _successRoute;
 
   @override
@@ -52,9 +51,12 @@ class _ConfirmLockScreenState extends State<ConfirmLockScreen> {
       await _searchRepository.createPersonLock(personId, note: _descriptionController.text.trim());
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Person locked successfully.')),
+      await AppDialogs.showSuccess(
+        context,
+        title: 'Person locked',
+        message: 'This person has been successfully added to your locks.',
       );
+      if (!mounted) return;
       if (_successRoute != null) {
         Navigator.of(context).pushReplacementNamed(_successRoute!);
       } else {
@@ -63,10 +65,10 @@ class _ConfirmLockScreenState extends State<ConfirmLockScreen> {
     } catch (error) {
       debugPrint('Confirm lock error: $error');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Something went wrong. Please try again.'),
-        ),
+      await AppDialogs.showError(
+        context,
+        title: 'Unable to lock person',
+        message: 'Something went wrong. Please try again.',
       );
     } finally {
       if (mounted) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/admin_repository.dart';
+import '../../../../core/widgets/app_dialogs.dart';
 
 Color _statusColor(String status) {
     switch (status) {
@@ -152,18 +153,24 @@ class _AdminUserListScreenState extends State<AdminUserListScreen>
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$actionType successful.')),
+      await AppDialogs.showSuccess(
+        context,
+        title: actionType == 'suspended'
+            ? 'Firm suspended'
+            : 'Firm activated',
+        message: actionType == 'suspended'
+            ? 'This firm no longer has active ScamLock access.'
+            : 'This firm has regained active ScamLock access.',
       );
       try
       { await _loadUsers(); } catch (_) { }
     } catch (error) {
       debugPrint('$actionType error: $error');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Something went wrong. Please try again.'),
-        ),
+      await AppDialogs.showError(
+        context,
+        title: 'Action failed',
+        message: 'Something went wrong. Please try again.',
       );
     } finally {
       if (mounted) {

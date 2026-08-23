@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/admin_repository.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/app_dialogs.dart';
 
 class AdminPendingUsersScreen extends StatefulWidget {
   const AdminPendingUsersScreen({super.key});
@@ -99,17 +100,21 @@ class _AdminPendingUsersScreenState extends State<AdminPendingUsersScreen>
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$action successful.')),
+      await AppDialogs.showSuccess(
+        context,
+        title: '$action successful',
+        message: action == 'Approve'
+            ? 'This firm now has full access to ScamLock.'
+            : 'This firm has been rejected and will not have access to ScamLock.',
       );
       await _loadPendingUsers();
     } catch (error) {
       debugPrint('$action error: $error');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Something went wrong. Please try again.'),
-        ),
+      await AppDialogs.showError(
+        context,
+        title: 'Action failed',
+        message: 'Something went wrong. Please try again.',
       );
     }
   }
