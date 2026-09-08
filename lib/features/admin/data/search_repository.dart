@@ -10,6 +10,9 @@ class SearchRepository {
     required String query,
   }) async {
     final trimmed = query.trim();
+    final safe = trimmed.replaceAll(RegExp(r'[^a-zA-Z0-9 ]'), '').trim();
+
+    if (safe.isEmpty) return [];
 
     final response = await _client
         .from('tracked_people')
@@ -18,7 +21,7 @@ class SearchRepository {
       locks:person_locks(count)
     ''')
         .or(
-          'full_name.ilike.%$trimmed%,phone_no.ilike.%$trimmed%,g_number.ilike.%$trimmed%,a_number.ilike.%$trimmed%',
+          'full_name.ilike.%$safe%,phone_no.ilike.%$safe%,g_number.ilike.%$safe%,a_number.ilike.%$safe%',
         )
         .order('created_at', ascending: false);
 
@@ -36,13 +39,24 @@ class SearchRepository {
 
     final conditions = <String>[];
     if (phone != null && phone.isNotEmpty) {
-      conditions.add('phone_no.eq.$phone');
+      final safePhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+      if (safePhone.isNotEmpty) {
+        conditions.add('phone_no.eq.$safePhone');
+      }
     }
+
     if (gNumber != null && gNumber.isNotEmpty) {
-      conditions.add('g_number.eq.$gNumber');
+      final safeGNumber = gNumber.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+      if (safeGNumber.isNotEmpty) {
+        conditions.add('g_number.eq.$safeGNumber');
+      }
     }
+
     if (aNumber != null && aNumber.isNotEmpty) {
-      conditions.add('a_number.eq.$aNumber');
+      final safeANumber = aNumber.replaceAll(RegExp(r'[^0-9]'), '');
+      if (safeANumber.isNotEmpty) {
+        conditions.add('a_number.eq.$safeANumber');
+      }
     }
 
     if (conditions.isEmpty) return [];
