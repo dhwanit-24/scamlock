@@ -176,6 +176,7 @@ class _RecordDetailScreenState extends State<RecordDetailScreen>
     );
 
     if (confirmed != true) return;
+    if (!mounted) return;
 
     try {
       if (_myLock == null) {

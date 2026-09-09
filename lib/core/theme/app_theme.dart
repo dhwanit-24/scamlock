@@ -1,4 +1,3 @@
-import 'dart:ui' show FontVariation;
 
 import 'package:flutter/material.dart';
 
@@ -24,11 +23,11 @@ class AppColors {
 
   static const blockMint = Color(0xFFC8E6CD); // active / approved
   static const blockLime = Color(0xFFDCEEB1); // neutral highlight
-  static const blockLilac = Color(0xFFC5B0F4); // admin / secondary highlight
+
   static const blockCream = Color(0xFFF4ECD6); // neutral / info
   static const blockBlush = Color(0xFFF2C6C2); // pending / attention (soft red family)
-  static const blockCoral = Color(0xFFF3C9B6); // warm accent
-  static const blockNavy = Color(0xFF1F1D3D); // admin dark accent
+
+
 
   static const success = Color(0xFF1EA64A);
 }
@@ -37,7 +36,7 @@ class AppColors {
 class AppSpacing {
   AppSpacing._();
 
-  static const hair = 1.0;
+
   static const xxs = 4.0;
   static const xs = 8.0;
   static const sm = 12.0;
@@ -51,13 +50,13 @@ class AppSpacing {
 class AppRadius {
   AppRadius._();
 
-  static const xs = 2.0;
-  static const sm = 6.0;
+
+
   static const md = 8.0;
   static const lg = 24.0;
-  static const xl = 32.0;
+
   static const pill = 50.0;
-  static const full = 9999.0;
+
 }
 
 /// Typography scale.
@@ -97,14 +96,7 @@ class AppTypography {
     fontVariations: [FontVariation('wght', 700)],
   );
 
-  static const TextStyle bodyLg = TextStyle(
-    fontFamily: _sans,
-    fontSize: 17,
-    height: 1.4,
-    letterSpacing: -0.1,
-    color: AppColors.ink,
-    fontVariations: [FontVariation('wght', 380)],
-  );
+
 
   static const TextStyle body = TextStyle(
     fontFamily: _sans,
