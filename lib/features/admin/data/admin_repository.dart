@@ -29,7 +29,6 @@ class AdminRepository {
     required String userId,
     required String status,
     required String actionType,
-    String? note,
   }) async {
     await _client.rpc('update_user_status_with_audit', params: {
       'p_user_id': userId,

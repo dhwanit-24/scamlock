@@ -74,9 +74,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (confirmed != true) return;
     await Supabase.instance.client.auth.signOut();
-    if (context.mounted) {
+    if (!mounted) return ;
       Navigator.of(context).pushReplacementNamed(AppRoutes.login);
-    }
   }
 
   @override
