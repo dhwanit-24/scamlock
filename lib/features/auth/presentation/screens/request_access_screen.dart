@@ -4,6 +4,7 @@ import '../../../../core/widgets/app_dialogs.dart';
 
 import '../../data/auth_repository.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../support/presentation/widgets/support_fab.dart';
 
 class RequestAccessScreen extends StatefulWidget {
   const RequestAccessScreen({super.key});
@@ -111,6 +112,7 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Request access')),
+      floatingActionButton: const SupportFab(),
       body: SafeArea(
         child: Form(
           key: _formKey,

@@ -5,6 +5,7 @@ import '../../../../core/routes/app_routes.dart';
 import '../../../auth/data/auth_repository.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_dialogs.dart';
+import '../../../support/presentation/widgets/support_fab.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -104,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold( floatingActionButton: const SupportFab(),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {

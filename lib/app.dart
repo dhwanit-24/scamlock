@@ -17,6 +17,7 @@ import 'features/lock/presentation/screens/confirm_lock_screen.dart';
 import 'features/lock/presentation/screens/lock_person_screen.dart';
 import 'features/auth/presentation/screens/auth_gate_screen.dart';
 import 'core/theme/app_theme.dart';
+import 'features/support/presentation/screens/contact_support_screen.dart';
 
 class ScamLockApp extends StatelessWidget {
   const ScamLockApp({super.key});
@@ -43,6 +44,7 @@ class ScamLockApp extends StatelessWidget {
         AppRoutes.myLocks: (_) => const MyLocksScreen(),
         AppRoutes.profile: (_) => const ProfileScreen(),
         AppRoutes.confirmLock: (_) => const ConfirmLockScreen(),
+        AppRoutes.contactSupport: (_) => const ContactSupportScreen(),
       },
     );
   }
