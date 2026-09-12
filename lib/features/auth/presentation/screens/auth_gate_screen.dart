@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:package_info_plus/package_info_plus.dart';
+import '../../../update/data/update_repository.dart';
+import '../../../update/domain/version_compare.dart';
+import '../../../update/presentation/widgets/update_dialog.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../data/auth_repository.dart';
 
@@ -17,7 +20,25 @@ class _AuthGateScreenState extends State<AuthGateScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkSession());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkForUpdate());
+  }
+
+  Future<void> _checkForUpdate() async {
+    try {
+      final info = await UpdateRepository().getLatestVersionInfo();
+      final packageInfo = await PackageInfo.fromPlatform();
+
+      if (info != null &&
+          isNewerVersion(packageInfo.version, info.latestVersion) &&
+          mounted) {
+        await showUpdateDialog(context, info);
+      }
+    } catch (error) {
+      debugPrint('Update check error: $error');
+    }
+
+    if (!mounted) return;
+    _checkSession();
   }
 
   Future<void> _checkSession() async {

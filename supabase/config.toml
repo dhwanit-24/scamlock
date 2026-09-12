@@ -1,0 +1,2 @@
+[functions.submit-password-recovery]
+verify_jwt = false
